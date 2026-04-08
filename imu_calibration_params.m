@@ -1,12 +1,5 @@
 clc;clear;
 %% 创建9个IMU的标定参数结构体
-% 误差模型:
-%   加速度计: a_meas = T_a * diag(S_a) * a_true + b_a
-%   陀螺仪:   ω_meas = T_g * diag(S_g) * ω_true + b_g
-% 校正公式:
-%   加速度计: a_true = inv(T_a * diag(S_a)) * (a_meas - b_a)
-%   陀螺仪:   ω_true = inv(T_g * diag(S_g)) * (ω_meas - b_g)
-%
 % 定义9个IMU的数据
 imuData(9).ab = [];  % 预分配
 

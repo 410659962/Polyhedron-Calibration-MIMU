@@ -1,20 +1,19 @@
-function err = acc_cost_function(params, acc_means, g_ref)
-    % 加速度计代价函数
-    % 误差模型: a_meas = T_a * diag(S_a) * a_true + b_a
-    % 校正公式: a_true = inv(T_a * diag(S_a)) * (a_meas - b_a)
-    % params = [bias_x, bias_y, bias_z, scale_x, scale_y, scale_z, mis_x, mis_y, mis_z]
-    bias = params(1:3);
-    scale = params(4:6);
-    mis = params(7:9);
+function err = acc_cost_function(params, acc_raw_static, g_ref)
+
+    b = params(1:3);
+    s = params(4:6);
+    m = params(7:12);
     
+
     T = eye(3);
-    T(2,1) = mis(1); T(3,1) = mis(2); T(3,2) = mis(3);
+    T(1,2) = -m(1); T(1,3) =  m(2);
+    T(2,1) =  m(3); T(2,3) = -m(4);
+    T(3,1) = -m(5); T(3,2) =  m(6);
     
-    Ka = diag(scale);
-    M_acc = inv(T * Ka);
+    K = diag(s);
+
+    acc_O = (acc_raw_static - b) / (T * K)';
     
-    acc_calib = (acc_means - bias) * M_acc';
-    
-    acc_norms = sqrt(sum(acc_calib.^2, 2));
-    err = acc_norms - g_ref;
+
+    err = sum(acc_O.^2, 2) - g_ref^2;
 end
